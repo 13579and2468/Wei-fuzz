@@ -5839,7 +5839,7 @@ static u8 fuzz_one(char **argv)
 
   orig_perf = perf_score = calculate_score(queue_cur);
 
-  /* Skip right away if -d is given, if we have done deterministic fuzzing on
+  /* Skip right away if -D is not given, if we have done deterministic fuzzing on
      this entry ourselves (was_fuzzed), or if it has gone through deterministic
      testing in earlier, resumed runs (passed_det). */
 
@@ -5909,8 +5909,7 @@ static u8 fuzz_one(char **argv)
        is advantageous, compared to doing it at the time of more disruptive
        changes, where the program flow may be affected in more violent ways.
 
-       The caveat is that we won't generate dictionaries in the -d mode or -S
-       mode - but that's probably a fair trade-off.
+       The caveat is that we won't generate dictionaries without -D mode - but that's probably a fair trade-off.
 
        This won't work particularly well with paths that exhibit variable
        behavior, but fails gracefully, so we'll carry out the checks anyway.
@@ -8436,7 +8435,7 @@ static void usage(u8 *argv0)
 
        "Fuzzing behavior settings:\n\n"
 
-       "  -d            - quick & dirty mode (skips deterministic steps)\n"
+       "  -D            - disable quick & dirty mode\n"
        "  -n            - fuzz without instrumentation (dumb mode)\n"
        "  -x dir        - optional fuzzer dictionary (see README)\n\n"
 
@@ -8866,10 +8865,10 @@ static void fix_up_sync(void)
   if (skip_deterministic)
   {
 
-    if (force_deterministic)
-      FATAL("use -S instead of -M -d");
-    else
-      FATAL("-S already implies -d");
+    //if (force_deterministic)
+    //  FATAL("use -S instead of -M -d");
+    //else
+    //  FATAL("-S already implies -d");
   }
 
   while (*x)
