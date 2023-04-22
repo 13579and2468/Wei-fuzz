@@ -1,0 +1,27 @@
+<root>
+  <FILE>
+    <ELEMENT>@@</ELEMENT>
+ </FILE>
+	  
+  <PARAMETER>
+    <MUST>false</MUST>
+    <ELEMENT>-b</ELEMENT>
+  </PARAMETER>
+  <PARAMETER>
+    <MUST>false</MUST>
+    <ELEMENT>-u</ELEMENT>
+  </PARAMETER>
+  <PARAMETER>
+    <MUST>false</MUST>
+    <ELEMENT>-f</ELEMENT>
+  </PARAMETER>
+  <PARAMETER>
+    <MUST>false</MUST>
+    <ELEMENT>-F</ELEMENT>
+  </PARAMETER>
+  <PARAMETER>
+    <MUST>false</MUST>
+    <ELEMENT>in</ELEMENT>
+  </PARAMETER>
+
+</root>

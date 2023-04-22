@@ -1,0 +1,188 @@
+<root>
+  <FILE>
+    <ELEMENT>@@</ELEMENT>
+ </FILE>
+
+  <PARAMETER>
+    <MUST>false</MUST>
+    <ELEMENT>--keep-all</ELEMENT>
+  </PARAMETER>	  
+  <PARAMETER>
+    <MUST>false</MUST>
+    <ELEMENT>-Xgnu</ELEMENT>
+    <ELEMENT>-Xvc</ELEMENT>
+  </PARAMETER>
+  <PARAMETER>
+    <MUST>false</MUST>
+    <ELEMENT>-M</ELEMENT>
+    <ELEMENT>-MP</ELEMENT>
+  </PARAMETER>
+  <PARAMETER>
+    <MUST>false</MUST>
+    <ELEMENT>-f bin</ELEMENT>
+    <ELEMENT>-f ith</ELEMENT>
+    <ELEMENT>-f srec</ELEMENT>
+    <ELEMENT>-f aout</ELEMENT>
+    <ELEMENT>-f aoutb</ELEMENT>
+    <ELEMENT>-f coff</ELEMENT>
+    <ELEMENT>-f elf32</ELEMENT>
+    <ELEMENT>-f elf64</ELEMENT>
+    <ELEMENT>-f elfx32</ELEMENT>
+    <ELEMENT>-f as86</ELEMENT>
+    <ELEMENT>-f obj</ELEMENT>
+    <ELEMENT>-f win32</ELEMENT>
+    <ELEMENT>-f win64</ELEMENT>
+    <ELEMENT>-f ieee</ELEMENT>
+    <ELEMENT>-f macho32</ELEMENT>
+    <ELEMENT>-f macho64</ELEMENT>
+    <ELEMENT>-f dbg</ELEMENT>
+    <ELEMENT>-f elf</ELEMENT>
+    <ELEMENT>-f macho</ELEMENT>
+    <ELEMENT>-f win</ELEMENT>
+  </PARAMETER>
+  <PARAMETER>
+    <MUST>false</MUST>
+    <ELEMENT>-g</ELEMENT>
+  </PARAMETER>	
+  <PARAMETER>
+    <MUST>false</MUST>
+    <ELEMENT>-gelf32</ELEMENT>
+    <ELEMENT>-gelf64</ELEMENT>
+    <ELEMENT>-gelfx32</ELEMENT>
+    <ELEMENT>-gobj</ELEMENT>
+    <ELEMENT>-gwin32</ELEMENT>
+    <ELEMENT>-gwin64</ELEMENT>
+    <ELEMENT>-gieee</ELEMENT>
+    <ELEMENT>-gmacho32</ELEMENT>
+    <ELEMENT>-gmacho64</ELEMENT>
+    <ELEMENT>-gdbg</ELEMENT>
+  </PARAMETER>	
+  <PARAMETER>
+    <MUST>true</MUST>
+    <ELEMENT>-l /dev/null</ELEMENT>
+  </PARAMETER>
+  <PARAMETER>
+    <MUST>false</MUST>
+    <ELEMENT>-Lb</ELEMENT>
+  </PARAMETER>
+  <PARAMETER>
+    <MUST>false</MUST>
+    <ELEMENT>-Ld</ELEMENT>
+  </PARAMETER>
+  <PARAMETER>
+    <MUST>false</MUST>
+    <ELEMENT>-Le</ELEMENT>
+  </PARAMETER>
+  <PARAMETER>
+    <MUST>false</MUST>
+    <ELEMENT>-Lf</ELEMENT>
+  </PARAMETER>
+  <PARAMETER>
+    <MUST>false</MUST>
+    <ELEMENT>-Lm</ELEMENT>
+  </PARAMETER>
+  <PARAMETER>
+    <MUST>false</MUST>
+    <ELEMENT>-Lp</ELEMENT>
+  </PARAMETER>
+  <PARAMETER>
+    <MUST>false</MUST>
+    <ELEMENT>-Ls</ELEMENT>
+  </PARAMETER>
+  <PARAMETER>
+    <MUST>false</MUST>
+    <ELEMENT>-Lw</ELEMENT>
+  </PARAMETER>
+  <PARAMETER>
+    <MUST>false</MUST>
+    <ELEMENT>-L+</ELEMENT>
+  </PARAMETER>
+  <PARAMETER>
+    <MUST>false</MUST>
+    <ELEMENT>-O0</ELEMENT>
+    <ELEMENT>-O1</ELEMENT>
+    <ELEMENT>-Ov</ELEMENT>
+  </PARAMETER>
+  <PARAMETER>
+    <MUST>false</MUST>
+    <ELEMENT>-t</ELEMENT>
+  </PARAMETER>
+  <PARAMETER>
+    <MUST>false</MUST>
+    <ELEMENT>-e</ELEMENT>
+  </PARAMETER>
+  <PARAMETER>
+    <MUST>false</MUST>
+    <ELEMENT>-a</ELEMENT>
+  </PARAMETER>
+  <PARAMETER>
+    <MUST>false</MUST>
+    <ELEMENT>-Dmacro=dfdf</ELEMENT>
+    <ELEMENT>-D123=123</ELEMENT>
+  </PARAMETER>
+  <PARAMETER>
+    <MUST>false</MUST>
+    <ELEMENT>-Umacro</ELEMENT>
+    <ELEMENT>-U123</ELEMENT>
+  </PARAMETER>
+  <PARAMETER>
+    <MUST>false</MUST>
+    <ELEMENT>--no-line</ELEMENT>
+  </PARAMETER>
+  <PARAMETER>
+    <MUST>false</MUST>
+    <ELEMENT>--reproducible</ELEMENT>
+  </PARAMETER>
+  <PARAMETER>
+    <MUST>false</MUST>
+    <ELEMENT>-w+x</ELEMENT>
+    <ELEMENT>-w-x</ELEMENT>
+  </PARAMETER>
+  <PARAMETER>
+    <MUST>false</MUST>
+    <ELEMENT>-w+error</ELEMENT>
+    <ELEMENT>-w-error</ELEMENT>
+    <ELEMENT>-w+error=all</ELEMENT>
+    <ELEMENT>-w-error=all</ELEMENT>
+    <ELEMENT>-w-error=bnd</ELEMENT>
+    <ELEMENT>-w+error=db-empty</ELEMENT>
+    <ELEMENT>-w+error=environment</ELEMENT>
+    <ELEMENT>-w+error=float</ELEMENT>
+    <ELEMENT>-w+error=float-denorm</ELEMENT>
+    <ELEMENT>-w+error=float-overflow</ELEMENT>
+    <ELEMENT>-w+error=float-toolong</ELEMENT>
+  </PARAMETER>
+  <PARAMETER>
+    <MUST>false</MUST>
+    <ELEMENT>--limit-passes 13213213</ELEMENT>
+    <ELEMENT>--limit-stalled-passed 13213213</ELEMENT>
+    <ELEMENT>--limit-macro-levels 13213213</ELEMENT>
+    <ELEMENT>--limit-macro-tokens 13213213</ELEMENT>
+    <ELEMENT>--limit-mmacros 13213213</ELEMENT>
+    <ELEMENT>--limit-rep 13213213</ELEMENT>
+    <ELEMENT>--limit-eval 13213213</ELEMENT>
+    <ELEMENT>--limit-lines 13213213</ELEMENT>
+    <ELEMENT>--limit-passes 1</ELEMENT>
+    <ELEMENT>--limit-stalled-passed 1</ELEMENT>
+    <ELEMENT>--limit-macro-levels 1</ELEMENT>
+    <ELEMENT>--limit-macro-tokens 1</ELEMENT>
+    <ELEMENT>--limit-mmacros 1</ELEMENT>
+    <ELEMENT>--limit-rep 1</ELEMENT>
+    <ELEMENT>--limit-eval 1</ELEMENT>
+    <ELEMENT>--limit-lines 1</ELEMENT>
+    <ELEMENT>--limit-passes 0</ELEMENT>
+    <ELEMENT>--limit-stalled-passed 0</ELEMENT>
+    <ELEMENT>--limit-macro-levels 0</ELEMENT>
+    <ELEMENT>--limit-macro-tokens 0</ELEMENT>
+    <ELEMENT>--limit-mmacros 0</ELEMENT>
+    <ELEMENT>--limit-rep 0</ELEMENT>
+    <ELEMENT>--limit-eval 0</ELEMENT>
+    <ELEMENT>--limit-lines 0</ELEMENT>
+    <ELEMENT>--limit-passes -1</ELEMENT>
+    <ELEMENT>--limit-stalled-passed -1</ELEMENT>
+    <ELEMENT>--limit-rep -1</ELEMENT>
+    <ELEMENT>--limit-eval -1</ELEMENT>
+    <ELEMENT>--limit-lines -1</ELEMENT>
+  </PARAMETER>
+
+</root>
