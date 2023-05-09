@@ -1,0 +1,32 @@
+<root>
+  <FILE>
+	  <ELEMENT>@@ /dev/null</ELEMENT>
+ </FILE>
+
+  <PARAMETER>
+    <MUST>false</MUST>
+    <ELEMENT>-c jpeg</ELEMENT>
+    <ELEMENT>-c zip</ELEMENT>
+    <ELEMENT>-c lzw</ELEMENT>
+    <ELEMENT>-c packbits</ELEMENT>
+    <ELEMENT>-c none</ELEMENT>
+  </PARAMETER>
+  <PARAMETER>
+    <MUST>false</MUST>
+    <ELEMENT>-r rows</ELEMENT>
+    <ELEMENT>-r strip</ELEMENT>
+  </PARAMETER>
+  <PARAMETER>
+    <MUST>false</MUST>
+    <ELEMENT>-b</ELEMENT>
+  </PARAMETER>
+  <PARAMETER>
+    <MUST>false</MUST>
+    <ELEMENT>-n</ELEMENT>
+  </PARAMETER>
+  <PARAMETER>
+    <MUST>false</MUST>
+    <ELEMENT>-8</ELEMENT>
+  </PARAMETER>
+
+</root>
