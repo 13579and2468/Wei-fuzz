@@ -115,8 +115,6 @@ EXP_ST u8 *in_dir, /* Input directory with test cases  */
 
 EXP_ST u32 exec_tmout = EXEC_TIMEOUT; /* Configurable exec timeout (ms)   */
 static u32 hang_tmout = EXEC_TIMEOUT; /* Timeout used for hang det (ms)   */
-EXP_ST u64 init_frksrv_time = 0;
-EXP_ST u64 test_val = 0;
 
 EXP_ST u64 mem_limit = MEM_LIMIT; /* Memory cap for child (MB)        */
 
@@ -151,11 +149,11 @@ EXP_ST u8 skip_deterministic = 1, /* Skip deterministic stages?       */
     persistent_mode,          /* Running in persistent mode?      */
     deferred_mode,            /* Deferred forkserver mode?        */
     fast_cal,                 /* Try to calibrate faster?         */
-    do_havoc = 1,             /* use for MAB*/
-    do_splice = 1,            /* use for MAB*/
-    do_arg_gen = 1,           /* use for MAB*/
-    use_cg = 0,               /* -A for arg_gen_det             */
-    do_run_afl = 0;           
+    do_havoc = 1,             /* use for MAB                      */
+    do_splice = 1,            /* use for MAB                      */
+    do_arg_gen = 1,           /* use for MAB                      */
+    use_cg = 0,               /* -A for arg_gen_det               */
+    use_mab = 0;              /* use mab mode                     */
 
 static s32 out_fd,       /* Persistent fd for out_file       */
     dev_urandom_fd = -1, /* Persistent fd for /dev/urandom   */
@@ -900,13 +898,17 @@ static void argv_add_to_queue(u8 *fname, u32 len, u8 passed_det, int argv_array[
   q->len = len;
   q->depth = cur_depth + 1;
   q->passed_det = passed_det;
-  if(strncmp(stage_name,"arg_gen",7)==0)
+
+  if(use_mab)
   {
-    q->arg_gen_parent = queue_cur->arg_gen_parent;
-  }
-  else
-  {
-    q->arg_gen_parent = q;
+    if(strncmp(stage_name,"arg_gen",7)==0)
+    {
+      q->arg_gen_parent = queue_cur->arg_gen_parent;
+    }
+    else
+    {
+      q->arg_gen_parent = q;
+    }
   }
 
   for (int i = 0; i < parameter_array_size; i++)
@@ -928,12 +930,11 @@ static void argv_add_to_queue(u8 *fname, u32 len, u8 passed_det, int argv_array[
 
   queued_paths++;
 #define MAB_ADD_CONST (2 << 20)
-  // queued_paths_exp2 = queued_paths * queued_paths;
   pending_not_fuzzed++;
 
   cycles_wo_finds = 0;
 
-  if(queue_cur)
+  if(use_mab && queue_cur)
   {
     q->total_havoc_exec_100us = (queue_cur->total_havoc_exec_100us + 1) / 2;
     q->total_havoc_gen_path = (queue_cur->total_havoc_gen_path + 1) / 2;
@@ -953,7 +954,7 @@ static void argv_add_to_queue(u8 *fname, u32 len, u8 passed_det, int argv_array[
     }
   }
 
-  if(strncmp(stage_name,"sync",4)==0)
+  if(use_mab && strncmp(stage_name,"sync",4)==0)
   {
     q->total_havoc_exec_100us = MAB_ADD_CONST;
     q->total_havoc_gen_path = MAB_ADD_CONST;
@@ -1719,12 +1720,15 @@ static void read_testcases(int argv_array[])
     {
       add_to_queue(fn, st.st_size, passed_det);
     }
-    queue_top->total_arg_gen_path = MAB_ADD_CONST;
-    queue_top->total_havoc_gen_path = MAB_ADD_CONST;
-    queue_top->total_splice_gen_path = MAB_ADD_CONST;
-    queue_top->total_havoc_exec_100us = MAB_ADD_CONST;
-    queue_top->total_arg_gen_exec_100us = MAB_ADD_CONST;
-    queue_top->total_splice_exec_100us = MAB_ADD_CONST;
+    if(use_mab)
+    {
+      queue_top->total_arg_gen_path = MAB_ADD_CONST;
+      queue_top->total_havoc_gen_path = MAB_ADD_CONST;
+      queue_top->total_splice_gen_path = MAB_ADD_CONST;
+      queue_top->total_havoc_exec_100us = MAB_ADD_CONST;
+      queue_top->total_arg_gen_exec_100us = MAB_ADD_CONST;
+      queue_top->total_splice_exec_100us = MAB_ADD_CONST;
+    }
   }
 
   free(nl); /* not tracked */
@@ -2876,18 +2880,8 @@ static u8 calibrate_case(char **argv, struct queue_entry *q, u8 *use_mem,
 
   if (dumb_mode != 1 && !no_forkserver && !forksrv_pid && !argv_no_forkserver)
   {
-    //u64 t = get_cur_time_us();
     init_forkserver(argv);
-    //init_frksrv_time = get_cur_time_us() - t;
   }
-  /*
-  // yuan-fuzz-cg calibrate with fork server
-  int temp_argv_no_forkserver = argv_no_forkserver;
-  if (argv_no_forkserver)
-  {
-    reset_forkserv_argvs(argv);
-    argv_no_forkserver = 0;
-  }*/
 
   if (q->exec_cksum)
   {
@@ -2977,11 +2971,14 @@ static u8 calibrate_case(char **argv, struct queue_entry *q, u8 *use_mem,
   total_bitmap_entries++;
 
   // MAB
-  q->arg_gen_parent->expect_new_cov_arg_gen_time = q->arg_gen_parent->total_arg_gen_exec_100us / q->arg_gen_parent->total_arg_gen_path;
-  q->expect_new_cov_havoc_time = q->total_havoc_exec_100us / q->total_havoc_gen_path;
-  q->expect_new_cov_splice_time = q->total_splice_exec_100us / q->total_splice_gen_path;
-  q->expect_new_cov_time = MIN(q->arg_gen_parent->expect_new_cov_arg_gen_time, q->expect_new_cov_havoc_time);
-  q->expect_new_cov_time = MIN(q->expect_new_cov_time, q->expect_new_cov_splice_time);
+  if(use_mab)
+  {
+    q->arg_gen_parent->expect_new_cov_arg_gen_time = q->arg_gen_parent->total_arg_gen_exec_100us / q->arg_gen_parent->total_arg_gen_path;
+    q->expect_new_cov_havoc_time = q->total_havoc_exec_100us / q->total_havoc_gen_path;
+    q->expect_new_cov_splice_time = q->total_splice_exec_100us / q->total_splice_gen_path;
+    q->expect_new_cov_time = MIN(q->arg_gen_parent->expect_new_cov_arg_gen_time, q->expect_new_cov_havoc_time);
+    q->expect_new_cov_time = MIN(q->expect_new_cov_time, q->expect_new_cov_splice_time);
+  }
 
   update_bitmap_score(q);
 
@@ -4576,7 +4573,7 @@ static void show_stats(void)
   banner_pad = (80 - banner_len) / 2;
   memset(tmp, ' ', banner_pad);
 
-  sprintf(tmp + banner_pad, "%s " cLCY VERSION cLGN " (%s)", crash_mode ? cPIN "peruvian were-rabbit" : cYEL "SQ-fuzz-MAB", use_banner);
+  sprintf(tmp + banner_pad, "%s " cLCY VERSION cLGN " (%s)", crash_mode ? cPIN "peruvian were-rabbit" : cYEL "Wei-fuzz", use_banner);
 
   SAYF("\n%s\n\n", tmp);
 
@@ -4924,13 +4921,15 @@ static void show_stats(void)
   else
     SAYF("\r");
 
-  /* Hallelujah! */
-  SAYF("                                                                \rexpect_new_cov_time : %llu\n", queue_cur->expect_new_cov_time);
-  SAYF("                                                                \rexpect_havoc_time : %llu path %llu exec_100us %llu\n", queue_cur->expect_new_cov_havoc_time,queue_cur->total_havoc_gen_path ,queue_cur->total_havoc_exec_100us);
-  SAYF("                                                                \rexpect_splice_time : %llu path %llu exec_100us %llu\n", queue_cur->expect_new_cov_splice_time, queue_cur->total_splice_gen_path, queue_cur->total_splice_exec_100us);
-  SAYF("                                                                \rexpect_arg_gen_time : %llu path %llu exec_100us %llu\n", queue_cur->arg_gen_parent->expect_new_cov_arg_gen_time, queue_cur->arg_gen_parent->total_arg_gen_path, queue_cur->arg_gen_parent->total_arg_gen_exec_100us);
-  SAYF("                  \r%d %d %d\n", do_havoc, do_splice, do_arg_gen);
-  SAYF("                                         \rfrksrv_time: %llu %llu\n",init_frksrv_time, test_val);
+  if(use_mab)
+  {
+    /* Hallelujah! */
+    SAYF("                                                                                          \rexpect_new_cov_time : %llu\n", queue_cur->expect_new_cov_time);
+    SAYF("                                                                                          \rexpect_havoc_time : %llu path :%llu exec_100us :%llu\n", queue_cur->expect_new_cov_havoc_time,queue_cur->total_havoc_gen_path ,queue_cur->total_havoc_exec_100us);
+    SAYF("                                                                                          \rexpect_splice_time : %llu path :%llu exec_100us :%llu\n", queue_cur->expect_new_cov_splice_time, queue_cur->total_splice_gen_path, queue_cur->total_splice_exec_100us);
+    SAYF("                                                                                          \rexpect_arg_gen_time : %llu path :%llu exec_100us :%llu\n", queue_cur->arg_gen_parent->expect_new_cov_arg_gen_time, queue_cur->arg_gen_parent->total_arg_gen_path, queue_cur->arg_gen_parent->total_arg_gen_exec_100us);
+    SAYF("                                                                                          \rdo_havoc:%d,do_splice:%d,do_arg_gen:%d\n", do_havoc, do_splice, do_arg_gen);
+  }
   fflush(0);
 }
 
@@ -5706,38 +5705,41 @@ static u8 fuzz_one(char **argv)
 
 #else
 
-  /*
-  if (pending_favored)
+  
+  if(!use_mab)
   {
+    if (pending_favored)
+    {
 
-     If we have any favored, non-fuzzed new arrivals in the queue,
-       possibly skip to them at the expense of already-fuzzed or non-favored
-       cases. 
+      /* If we have any favored, non-fuzzed new arrivals in the queue,
+        possibly skip to them at the expense of already-fuzzed or non-favored
+        cases. */
 
-    if ((queue_cur->was_fuzzed || !queue_cur->favored) &&
-        UR(100) < SKIP_TO_NEW_PROB)
-      return 1;
+      if ((queue_cur->was_fuzzed || !queue_cur->favored) &&
+          UR(100) < SKIP_TO_NEW_PROB)
+        return 1;
+    }
+    else if (!dumb_mode && !queue_cur->favored && queued_paths > 10)
+    {
+
+      /* Otherwise, still possibly skip non-favored cases, albeit less often.
+        The odds of skipping stuff are higher for already-fuzzed inputs and
+        lower for never-fuzzed entries. */
+
+      if (!queue_cur->was_fuzzed)
+      {
+
+        if (UR(100) < SKIP_NFAV_NEW_PROB)
+          return 1;
+      }
+      else
+      {
+
+        if (UR(100) < SKIP_NFAV_OLD_PROB)
+          return 1;
+      }
+    }
   }
-  else if (!dumb_mode && !queue_cur->favored && queued_paths > 10)
-  {
-
-     Otherwise, still possibly skip non-favored cases, albeit less often.
-       The odds of skipping stuff are higher for already-fuzzed inputs and
-       lower for never-fuzzed entries. 
-
-    if (!queue_cur->was_fuzzed)
-    {
-
-      if (UR(100) < SKIP_NFAV_NEW_PROB)
-        return 1;
-    }
-    else
-    {
-
-      if (UR(100) < SKIP_NFAV_OLD_PROB)
-        return 1;
-    }
-  }*/
 
 #endif /* ^IGNORE_FINDS */
 
@@ -6922,7 +6924,7 @@ havoc_stage:
     stage_max = HAVOC_MIN;
 
   int cannot_splice_temp = 0;
-  if(!do_havoc && strcmp(stage_name,"havoc")==0)
+  if(use_mab && !do_havoc && strcmp(stage_name,"havoc")==0)
   {
     goto retry_splicing;
   }
@@ -7341,11 +7343,12 @@ havoc_stage:
     }
 
     int prev_queue_discover = queued_discovered;
-    u64 t = get_cur_time_us() / 100;
+    u64 t;
+    if (use_mab)t = get_cur_time_us() / 100;
     if (common_fuzz_stuff(argv, out_buf, temp_len))
       goto abandon_entry;
 
-    if(strcmp(stage_name,"havoc")==0)
+    if(use_mab && strcmp(stage_name,"havoc")==0)
     {
       queue_cur->total_havoc_exec_100us += MAB_ADD_CONST * (get_cur_time_us()/100 - t);
       if (queued_discovered != prev_queue_discover)
@@ -7365,7 +7368,7 @@ havoc_stage:
         queue_cur->total_havoc_exec_100us /= 2;
         mab_decay();
       }
-    }else if(strncmp(stage_name,"splice",6)==0)
+    }else if(use_mab && strncmp(stage_name,"splice",6)==0)
     {
       queue_cur->total_splice_exec_100us += MAB_ADD_CONST * (get_cur_time_us()/100 - t);
       if (queued_discovered != prev_queue_discover)
@@ -7437,19 +7440,19 @@ havoc_stage:
 
 retry_splicing:
 
-  if(cannot_splice_temp==SPLICE_CYCLES)
+  if(use_mab && cannot_splice_temp==SPLICE_CYCLES)
   {
     queue_cur->total_splice_exec_100us += SPLICE_CYCLES * stage_max * MAB_ADD_CONST * 20;
   }
 
-  if(queue_cur->len<=1)
+  if(use_mab && queue_cur->len<=1)
   {
-    queue_cur->cannot_do_splice =1;
+    queue_cur->cannot_do_splice = 1;
   }
 
-  cannot_splice_temp++;
+  if(use_mab)cannot_splice_temp++;
 
-  if ( do_splice && use_splicing && splice_cycle++ < SPLICE_CYCLES && queue_cur->len > 1)
+  if ( (do_splice||!use_mab) && use_splicing && queued_paths > 1 && splice_cycle++ < SPLICE_CYCLES && queue_cur->len > 1)
   {
 
     struct queue_entry *target;
@@ -7557,9 +7560,9 @@ abandon_entry:
       pending_favored--;
   }
 
-  if(do_splice)queue_cur->total_splice_exec_100us += MAB_ADD_CONST * 10;
-  if(do_havoc)queue_cur->total_havoc_exec_100us += MAB_ADD_CONST * 10;
-  if(do_arg_gen)queue_cur->total_arg_gen_exec_100us += MAB_ADD_CONST * 10;
+  if(use_mab && do_splice)queue_cur->total_splice_exec_100us += MAB_ADD_CONST * 10;
+  if(use_mab && do_havoc)queue_cur->total_havoc_exec_100us += MAB_ADD_CONST * 10;
+  if(use_mab && do_arg_gen)queue_cur->total_arg_gen_exec_100us += MAB_ADD_CONST * 10;
 
   munmap(orig_in, queue_cur->len);
 
@@ -7760,8 +7763,34 @@ static char **argv_fuzz_one(char **argv)
   }
 
   // skip when not doing arg_gen
-  if(!do_arg_gen)
+  if(!do_arg_gen && !use_mab)
     goto skip_arg_gen;
+
+  if(!use_mab)
+  {
+    if(queue_cur->arg_was_fuzzed)
+      goto skip_arg_gen;
+
+    // add skip fuzz of afl here to speed up in early time
+    if (pending_favored)
+    {
+      if ((queue_cur->was_fuzzed || !queue_cur->favored) && UR(100) < SKIP_TO_NEW_PROB)
+        goto skip_arg_gen;
+    }
+    else if (!queue_cur->favored && queued_paths > 10)
+    {
+      if (!queue_cur->was_fuzzed)
+      {
+        if (UR(100) < SKIP_NFAV_NEW_PROB)
+          goto skip_arg_gen;
+      }
+      else
+      {
+        if (UR(100) < SKIP_NFAV_OLD_PROB)
+          goto skip_arg_gen;
+      }
+    }
+  }
 
   /* Map the test case into memory. */
   fd = open(queue_cur->fname, O_RDONLY);
@@ -7801,23 +7830,27 @@ static char **argv_fuzz_one(char **argv)
 
     int prev_queue_discover = queued_discovered;
 
-    u64 t = get_cur_time_us()/100;
+    u64 t;
+    if (use_mab)t = get_cur_time_us() / 100;
     if (argv_common_fuzz_stuff(new_argv, out_buf, len, run_argv))
       goto argv_abandon_entry;
 
-    queue_cur->arg_gen_parent->total_arg_gen_exec_100us += MAB_ADD_CONST * (get_cur_time_us()/100 - t);
-    if (queued_discovered != prev_queue_discover)
+    if(use_mab)
     {
-      queue_cur->arg_gen_parent->total_arg_gen_path += MAB_ADD_CONST;
-      queue_cur->total_havoc_exec_100us += 1;
-      queue_cur->total_havoc_gen_path += 1;
-      queue_cur->total_splice_exec_100us += 1;
-      queue_cur->total_splice_gen_path += 1;
-      queue_cur->total_havoc_exec_100us /= 2;
-      queue_cur->total_havoc_gen_path /= 2;
-      queue_cur->total_splice_exec_100us /= 2;
-      queue_cur->total_splice_gen_path /= 2;
-      mab_decay();
+      queue_cur->arg_gen_parent->total_arg_gen_exec_100us += MAB_ADD_CONST * (get_cur_time_us()/100 - t);
+      if (queued_discovered != prev_queue_discover)
+      {
+        queue_cur->arg_gen_parent->total_arg_gen_path += MAB_ADD_CONST;
+        queue_cur->total_havoc_exec_100us += 1;
+        queue_cur->total_havoc_gen_path += 1;
+        queue_cur->total_splice_exec_100us += 1;
+        queue_cur->total_splice_gen_path += 1;
+        queue_cur->total_havoc_exec_100us /= 2;
+        queue_cur->total_havoc_gen_path /= 2;
+        queue_cur->total_splice_exec_100us /= 2;
+        queue_cur->total_splice_gen_path /= 2;
+        mab_decay();
+      }
     }
 
     char **now = new_argv;
@@ -7852,26 +7885,30 @@ static char **argv_fuzz_one(char **argv)
       generate_arg(new_argv, argv, queue_cur->argv);
 
       int prev_queue_discover = queued_discovered;
-      u64 t = get_cur_time_us()/100;
+      u64 t;
+      if (use_mab)t = get_cur_time_us() / 100;
       if (argv_common_fuzz_stuff(new_argv, out_buf, len, queue_cur->argv))
       {
         queue_cur->argv[i] = orig;
         goto argv_abandon_entry;
       }
       
-      queue_cur->arg_gen_parent->total_arg_gen_exec_100us += MAB_ADD_CONST * (get_cur_time_us()/100 - t);
-      if (queued_discovered != prev_queue_discover)
+      if(use_mab)
       {
-        queue_cur->arg_gen_parent->total_arg_gen_path += MAB_ADD_CONST;
-        queue_cur->total_havoc_exec_100us += 1;
-        queue_cur->total_havoc_gen_path += 1;
-        queue_cur->total_splice_exec_100us += 1;
-        queue_cur->total_splice_gen_path += 1;
-        queue_cur->total_havoc_exec_100us /= 2;
-        queue_cur->total_havoc_gen_path /= 2;
-        queue_cur->total_splice_exec_100us /= 2;
-        queue_cur->total_splice_gen_path /= 2;
-        mab_decay();
+        queue_cur->arg_gen_parent->total_arg_gen_exec_100us += MAB_ADD_CONST * (get_cur_time_us()/100 - t);
+        if (queued_discovered != prev_queue_discover)
+        {
+          queue_cur->arg_gen_parent->total_arg_gen_path += MAB_ADD_CONST;
+          queue_cur->total_havoc_exec_100us += 1;
+          queue_cur->total_havoc_gen_path += 1;
+          queue_cur->total_splice_exec_100us += 1;
+          queue_cur->total_splice_gen_path += 1;
+          queue_cur->total_havoc_exec_100us /= 2;
+          queue_cur->total_havoc_gen_path /= 2;
+          queue_cur->total_splice_exec_100us /= 2;
+          queue_cur->total_splice_gen_path /= 2;
+          mab_decay();
+        }
       }
 
       queue_cur->argv[i] = orig;
@@ -8437,7 +8474,9 @@ static void usage(u8 *argv0)
 
        "  -D            - disable quick & dirty mode\n"
        "  -n            - fuzz without instrumentation (dumb mode)\n"
-       "  -x dir        - optional fuzzer dictionary (see README)\n\n"
+       "  -x dir        - optional fuzzer dictionary (see README)\n"
+       "  -a            - enable multi-arm-bandit seed&task schedling\n"
+       "  -A            - enable arg_gen_det stage\n\n"
 
        "Other stuff:\n\n"
 
@@ -9218,7 +9257,7 @@ int main(int argc, char **argv)
   struct timezone tz;
 
   SAYF(cCYA "afl-fuzz " cBRI VERSION cRST " by <lcamtuf@google.com>\n");
-  SAYF(cCYA "SQ-fuzz-MAB " cBRI VERSION cRST " by <13579and24680@gmail.com>\n");
+  SAYF(cCYA "Wei-fuzz " cBRI VERSION cRST " by <13579and24680@gmail.com>\n");
 
   doc_path = access(DOC_PATH, F_OK) ? "docs" : DOC_PATH;
 
@@ -9226,7 +9265,7 @@ int main(int argc, char **argv)
   srandom(tv.tv_sec ^ tv.tv_usec ^ getpid());
   char *xml_position;
 
-  while ((opt = getopt(argc, argv, "+i:o:s:wrf:m:b:t:T:DnACB:S:M:x:p:QV")) > 0)
+  while ((opt = getopt(argc, argv, "+i:o:s:wrf:m:b:t:T:DnaACB:S:M:x:p:QV")) > 0)
 
     switch (opt)
     {
@@ -9277,7 +9316,7 @@ int main(int argc, char **argv)
     case 'M':
     { /* master sync ID */
 
-      FATAL("SQ-fuzz-MAB Can only be used in slave mode, -M options not supported. please try to use -S.");
+      FATAL("Wei-fuzz Can only be used in slave mode, -M options not supported. please try to use -S.");
       exit(0);
       // u8 *c;
 
@@ -9481,6 +9520,12 @@ int main(int argc, char **argv)
     case 'A': /* use argv det stage */
 
       use_cg = 1;
+
+      break;
+
+    case 'a': /* use multi-arm-bandit seed&task scheduling */
+
+      use_mab = 1;
 
       break;
 
@@ -9702,7 +9747,7 @@ int main(int argc, char **argv)
   for (i = 0; i < initial_seed_count; i++)
   {
     u8 skipped_fuzz;
-    //cull_queue();
+    if(!use_mab)cull_queue();
 
     while (seek_to)
     {
@@ -9742,12 +9787,15 @@ int main(int argc, char **argv)
         sync_fuzzers(init_argv);
       }
     }
-    queue_cur->arg_gen_parent->expect_new_cov_arg_gen_time = queue_cur->arg_gen_parent->total_arg_gen_exec_100us / queue_cur->arg_gen_parent->total_arg_gen_path;
-    queue_cur->expect_new_cov_havoc_time = queue_cur->total_havoc_exec_100us / queue_cur->total_havoc_gen_path;
-    queue_cur->expect_new_cov_splice_time = queue_cur->total_splice_exec_100us / queue_cur->total_splice_gen_path;
-    queue_cur->expect_new_cov_time = MIN(queue_cur->arg_gen_parent->expect_new_cov_arg_gen_time, queue_cur->expect_new_cov_havoc_time);
-    if(!queue_cur->cannot_do_splice)queue_cur->expect_new_cov_time = MIN(queue_cur->expect_new_cov_time, queue_cur->expect_new_cov_splice_time);
-    
+
+    if(use_mab)
+    {
+      queue_cur->arg_gen_parent->expect_new_cov_arg_gen_time = queue_cur->arg_gen_parent->total_arg_gen_exec_100us / queue_cur->arg_gen_parent->total_arg_gen_path;
+      queue_cur->expect_new_cov_havoc_time = queue_cur->total_havoc_exec_100us / queue_cur->total_havoc_gen_path;
+      queue_cur->expect_new_cov_splice_time = queue_cur->total_splice_exec_100us / queue_cur->total_splice_gen_path;
+      queue_cur->expect_new_cov_time = MIN(queue_cur->arg_gen_parent->expect_new_cov_arg_gen_time, queue_cur->expect_new_cov_havoc_time);
+      if(!queue_cur->cannot_do_splice)queue_cur->expect_new_cov_time = MIN(queue_cur->expect_new_cov_time, queue_cur->expect_new_cov_splice_time);
+    }
     if (!stop_soon && exit_1)
       stop_soon = 2;
       
@@ -9763,7 +9811,7 @@ int main(int argc, char **argv)
   {
 
     u8 skipped_fuzz = 0;
-    if(do_run_afl)cull_queue();
+    if(!use_mab)cull_queue();
 
     // original afl jump to next cycle
     if (!queue_cur)
@@ -9806,7 +9854,7 @@ int main(int argc, char **argv)
       argv_no_forkserver = 0;
     }
 
-    if(do_havoc || do_splice)skipped_fuzz = fuzz_one(use_argv);
+    if(do_havoc || do_splice || !use_mab)skipped_fuzz = fuzz_one(use_argv);
 
     if (!stop_soon && sync_id && !skipped_fuzz)
     {
@@ -9822,7 +9870,7 @@ int main(int argc, char **argv)
     if (stop_soon)
       break;
     
-    if(do_run_afl)
+    if(!use_mab)
     {
       queue_cur = queue_cur->next;
       current_entry++;
