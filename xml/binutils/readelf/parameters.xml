@@ -1,0 +1,272 @@
+<root>
+<FILE>
+<ELEMENT>@@</ELEMENT>
+</FILE>
+<PARAMETER>
+<MUST>false</MUST>
+<ELEMENT>-a</ELEMENT>
+</PARAMETER>
+<PARAMETER>
+<MUST>false</MUST>
+<ELEMENT>-h</ELEMENT>
+</PARAMETER>
+<PARAMETER>
+<MUST>false</MUST>
+<ELEMENT>-l</ELEMENT>
+</PARAMETER>
+<PARAMETER>
+<MUST>false</MUST>
+<ELEMENT>-S</ELEMENT>
+</PARAMETER>
+<PARAMETER>
+<MUST>false</MUST>
+<ELEMENT>-g</ELEMENT>
+</PARAMETER>
+<PARAMETER>
+<MUST>false</MUST>
+<ELEMENT>-t</ELEMENT>
+</PARAMETER>
+<PARAMETER>
+<MUST>false</MUST>
+<ELEMENT>-s</ELEMENT>
+</PARAMETER>
+<PARAMETER>
+<MUST>false</MUST>
+<ELEMENT>--dyn-syms</ELEMENT>
+</PARAMETER>
+<PARAMETER>
+<MUST>false</MUST>
+<ELEMENT>-e</ELEMENT>
+</PARAMETER>
+<PARAMETER>
+<MUST>false</MUST>
+<ELEMENT>-n</ELEMENT>
+</PARAMETER>
+<PARAMETER>
+<MUST>false</MUST>
+<ELEMENT>-r</ELEMENT>
+</PARAMETER>
+<PARAMETER>
+<MUST>false</MUST>
+<ELEMENT>-u</ELEMENT>
+</PARAMETER>
+<PARAMETER>
+<MUST>false</MUST>
+<ELEMENT>-d</ELEMENT>
+</PARAMETER>
+<PARAMETER>
+<MUST>false</MUST>
+<ELEMENT>-V</ELEMENT>
+</PARAMETER>
+<PARAMETER>
+<MUST>false</MUST>
+<ELEMENT>-A</ELEMENT>
+</PARAMETER>
+<PARAMETER>
+<MUST>false</MUST>
+<ELEMENT>-D</ELEMENT>
+</PARAMETER>
+<PARAMETER>
+<MUST>false</MUST>
+<ELEMENT>-x .text</ELEMENT>
+<ELEMENT>-x .data</ELEMENT>
+<ELEMENT>-x .data1</ELEMENT>
+<ELEMENT>-x .rela.dyn</ELEMENT>
+<ELEMENT>-x .rela.plt</ELEMENT>
+<ELEMENT>-x .dynamic</ELEMENT>
+<ELEMENT>-x .dynstr</ELEMENT>
+<ELEMENT>-x .got</ELEMENT>
+<ELEMENT>-x .plt</ELEMENT>
+<ELEMENT>-x .interp</ELEMENT>
+<ELEMENT>-x .ctors</ELEMENT>
+<ELEMENT>-x .dtors</ELEMENT>
+<ELEMENT>-x .hash</ELEMENT>
+<ELEMENT>-x .init</ELEMENT>
+<ELEMENT>-x .fini</ELEMENT>
+<ELEMENT>-x .shstrtab</ELEMENT>
+<ELEMENT>-x .strtab</ELEMENT>
+<ELEMENT>-x .debug</ELEMENT>
+<ELEMENT>-x .symtab</ELEMENT>
+<ELEMENT>-x .line</ELEMENT>
+<ELEMENT>-x .comment</ELEMENT>
+<ELEMENT>-x .note</ELEMENT>
+</PARAMETER>
+<PARAMETER>
+<MUST>false</MUST>
+<ELEMENT>-R .text</ELEMENT>
+<ELEMENT>-R .data</ELEMENT>
+<ELEMENT>-R .data1</ELEMENT>
+<ELEMENT>-R .rela.dyn</ELEMENT>
+<ELEMENT>-R .rela.plt</ELEMENT>
+<ELEMENT>-R .dynamic</ELEMENT>
+<ELEMENT>-R .dynstr</ELEMENT>
+<ELEMENT>-R .got</ELEMENT>
+<ELEMENT>-R .plt</ELEMENT>
+<ELEMENT>-R .interp</ELEMENT>
+<ELEMENT>-R .ctors</ELEMENT>
+<ELEMENT>-R .dtors</ELEMENT>
+<ELEMENT>-R .hash</ELEMENT>
+<ELEMENT>-R .init</ELEMENT>
+<ELEMENT>-R .fini</ELEMENT>
+<ELEMENT>-R .shstrtab</ELEMENT>
+<ELEMENT>-R .strtab</ELEMENT>
+<ELEMENT>-R .debug</ELEMENT>
+<ELEMENT>-R .symtab</ELEMENT>
+<ELEMENT>-R .line</ELEMENT>
+<ELEMENT>-R .comment</ELEMENT>
+<ELEMENT>-R .note</ELEMENT>
+</PARAMETER>
+<PARAMETER>
+<MUST>false</MUST>
+<ELEMENT>-p .text</ELEMENT>
+<ELEMENT>-p .data</ELEMENT>
+<ELEMENT>-p .data1</ELEMENT>
+<ELEMENT>-p .rela.dyn</ELEMENT>
+<ELEMENT>-p .rela.plt</ELEMENT>
+<ELEMENT>-p .dynamic</ELEMENT>
+<ELEMENT>-p .dynstr</ELEMENT>
+<ELEMENT>-p .got</ELEMENT>
+<ELEMENT>-p .plt</ELEMENT>
+<ELEMENT>-p .interp</ELEMENT>
+<ELEMENT>-p .ctors</ELEMENT>
+<ELEMENT>-p .dtors</ELEMENT>
+<ELEMENT>-p .hash</ELEMENT>
+<ELEMENT>-p .init</ELEMENT>
+<ELEMENT>-p .fini</ELEMENT>
+<ELEMENT>-p .shstrtab</ELEMENT>
+<ELEMENT>-p .strtab</ELEMENT>
+<ELEMENT>-p .debug</ELEMENT>
+<ELEMENT>-p .symtab</ELEMENT>
+<ELEMENT>-p .line</ELEMENT>
+<ELEMENT>-p .comment</ELEMENT>
+<ELEMENT>-p .note</ELEMENT>
+</PARAMETER>
+<PARAMETER>
+<MUST>false</MUST>
+<ELEMENT>--ctf=.text</ELEMENT>
+<ELEMENT>--ctf=.data</ELEMENT>
+<ELEMENT>--ctf=.data1</ELEMENT>
+<ELEMENT>--ctf=.rela.dyn</ELEMENT>
+<ELEMENT>--ctf=.rela.plt</ELEMENT>
+<ELEMENT>--ctf=.dynamic</ELEMENT>
+<ELEMENT>--ctf=.dynstr</ELEMENT>
+<ELEMENT>--ctf=.got</ELEMENT>
+<ELEMENT>--ctf=.plt</ELEMENT>
+<ELEMENT>--ctf=.interp</ELEMENT>
+<ELEMENT>--ctf=.ctors</ELEMENT>
+<ELEMENT>--ctf=.dtors</ELEMENT>
+<ELEMENT>--ctf=.hash</ELEMENT>
+<ELEMENT>--ctf=.init</ELEMENT>
+<ELEMENT>--ctf=.fini</ELEMENT>
+<ELEMENT>--ctf=.shstrtab</ELEMENT>
+<ELEMENT>--ctf=.strtab</ELEMENT>
+<ELEMENT>--ctf=.debug</ELEMENT>
+<ELEMENT>--ctf=.symtab</ELEMENT>
+<ELEMENT>--ctf=.line</ELEMENT>
+<ELEMENT>--ctf=.comment</ELEMENT>
+<ELEMENT>--ctf=.note</ELEMENT>
+</PARAMETER>
+<PARAMETER>
+<MUST>false</MUST>
+<ELEMENT>--ctf-parent=.text</ELEMENT>
+<ELEMENT>--ctf-parent=.data</ELEMENT>
+<ELEMENT>--ctf-parent=.data1</ELEMENT>
+<ELEMENT>--ctf-parent=.rela.dyn</ELEMENT>
+<ELEMENT>--ctf-parent=.rela.plt</ELEMENT>
+<ELEMENT>--ctf-parent=.dynamic</ELEMENT>
+<ELEMENT>--ctf-parent=.dynstr</ELEMENT>
+<ELEMENT>--ctf-parent=.got</ELEMENT>
+<ELEMENT>--ctf-parent=.plt</ELEMENT>
+<ELEMENT>--ctf-parent=.interp</ELEMENT>
+<ELEMENT>--ctf-parent=.ctors</ELEMENT>
+<ELEMENT>--ctf-parent=.dtors</ELEMENT>
+<ELEMENT>--ctf-parent=.hash</ELEMENT>
+<ELEMENT>--ctf-parent=.init</ELEMENT>
+<ELEMENT>--ctf-parent=.fini</ELEMENT>
+<ELEMENT>--ctf-parent=.shstrtab</ELEMENT>
+<ELEMENT>--ctf-parent=.strtab</ELEMENT>
+<ELEMENT>--ctf-parent=.debug</ELEMENT>
+<ELEMENT>--ctf-parent=.symtab</ELEMENT>
+<ELEMENT>--ctf-parent=.line</ELEMENT>
+<ELEMENT>--ctf-parent=.comment</ELEMENT>
+<ELEMENT>--ctf-parent=.note</ELEMENT>
+</PARAMETER>
+<PARAMETER>
+<MUST>false</MUST>
+<ELEMENT>--ctf-symbols=.text</ELEMENT>
+<ELEMENT>--ctf-symbols=.data</ELEMENT>
+<ELEMENT>--ctf-symbols=.data1</ELEMENT>
+<ELEMENT>--ctf-symbols=.rela.dyn</ELEMENT>
+<ELEMENT>--ctf-symbols=.rela.plt</ELEMENT>
+<ELEMENT>--ctf-symbols=.dynamic</ELEMENT>
+<ELEMENT>--ctf-symbols=.dynstr</ELEMENT>
+<ELEMENT>--ctf-symbols=.got</ELEMENT>
+<ELEMENT>--ctf-symbols=.plt</ELEMENT>
+<ELEMENT>--ctf-symbols=.interp</ELEMENT>
+<ELEMENT>--ctf-symbols=.ctors</ELEMENT>
+<ELEMENT>--ctf-symbols=.dtors</ELEMENT>
+<ELEMENT>--ctf-symbols=.hash</ELEMENT>
+<ELEMENT>--ctf-symbols=.init</ELEMENT>
+<ELEMENT>--ctf-symbols=.fini</ELEMENT>
+<ELEMENT>--ctf-symbols=.shstrtab</ELEMENT>
+<ELEMENT>--ctf-symbols=.strtab</ELEMENT>
+<ELEMENT>--ctf-symbols=.debug</ELEMENT>
+<ELEMENT>--ctf-symbols=.symtab</ELEMENT>
+<ELEMENT>--ctf-symbols=.line</ELEMENT>
+<ELEMENT>--ctf-symbols=.comment</ELEMENT>
+<ELEMENT>--ctf-symbols=.note</ELEMENT>
+</PARAMETER>
+<PARAMETER>
+<MUST>false</MUST>
+<ELEMENT>--ctf-strings=.text</ELEMENT>
+<ELEMENT>--ctf-strings=.data</ELEMENT>
+<ELEMENT>--ctf-strings=.data1</ELEMENT>
+<ELEMENT>--ctf-strings=.rela.dyn</ELEMENT>
+<ELEMENT>--ctf-strings=.rela.plt</ELEMENT>
+<ELEMENT>--ctf-strings=.dynamic</ELEMENT>
+<ELEMENT>--ctf-strings=.dynstr</ELEMENT>
+<ELEMENT>--ctf-strings=.got</ELEMENT>
+<ELEMENT>--ctf-strings=.plt</ELEMENT>
+<ELEMENT>--ctf-strings=.interp</ELEMENT>
+<ELEMENT>--ctf-strings=.ctors</ELEMENT>
+<ELEMENT>--ctf-strings=.dtors</ELEMENT>
+<ELEMENT>--ctf-strings=.hash</ELEMENT>
+<ELEMENT>--ctf-strings=.init</ELEMENT>
+<ELEMENT>--ctf-strings=.fini</ELEMENT>
+<ELEMENT>--ctf-strings=.shstrtab</ELEMENT>
+<ELEMENT>--ctf-strings=.strtab</ELEMENT>
+<ELEMENT>--ctf-strings=.debug</ELEMENT>
+<ELEMENT>--ctf-strings=.symtab</ELEMENT>
+<ELEMENT>--ctf-strings=.line</ELEMENT>
+<ELEMENT>--ctf-strings=.comment</ELEMENT>
+<ELEMENT>--ctf-strings=.note</ELEMENT>
+</PARAMETER>
+<PARAMETER>
+<MUST>false</MUST>
+<ELEMENT>-z</ELEMENT>
+</PARAMETER>
+<PARAMETER>
+<MUST>false</MUST>
+<ELEMENT>-c</ELEMENT>
+</PARAMETER>
+<PARAMETER>
+<MUST>false</MUST>
+<ELEMENT>--wlLiaprmfFsoRtUuTgAckK</ELEMENT>
+</PARAMETER>
+<PARAMETER>
+<MUST>false</MUST>
+<ELEMENT>--dwarf-depth=8</ELEMENT>
+</PARAMETER>
+<PARAMETER>
+<MUST>false</MUST>
+<ELEMENT>--dwarf-start=8</ELEMENT>
+</PARAMETER>
+<PARAMETER>
+<MUST>false</MUST>
+<ELEMENT>-I</ELEMENT>
+</PARAMETER>
+<PARAMETER>
+<MUST>false</MUST>
+<ELEMENT>-W</ELEMENT>
+</PARAMETER>
+</root>

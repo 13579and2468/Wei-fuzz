@@ -7763,7 +7763,7 @@ static char **argv_fuzz_one(char **argv)
   }
 
   // skip when not doing arg_gen
-  if(!do_arg_gen && !use_mab)
+  if(use_mab && !do_arg_gen)
     goto skip_arg_gen;
 
   if(!use_mab)
