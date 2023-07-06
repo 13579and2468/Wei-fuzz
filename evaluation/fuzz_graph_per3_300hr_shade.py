@@ -36,7 +36,7 @@ def main():
                     init_time = int(line.split(',', 13)[0].strip())
                 time_sec = int(line.split(',', 13)[0].strip()) - init_time
                 time = (int(line.split(',', 13)[0].strip()) - init_time) / 3600
-                if time > 300:
+                if time >= 300:
                     break
         
                 x.append(time)
