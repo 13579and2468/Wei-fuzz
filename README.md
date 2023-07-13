@@ -1,29 +1,21 @@
-# Yuan-fuzz
-Fuzzer runs with argv information and uses k-means clustering to group seed.
+# Wei-fuzz
+Fuzzer runs with argv information and can use MAB model to select seed and task.
+Either Wei-fuzz or Wei-fuzz with MAB improve the time allocation of Yuan-fuzz. 
 
 ```
-  Written and maintained by zodf0055980 <zodf0055980@gmail.com>
+  Written and maintained by 13579and2468 <13579and24680@gmail.com>
   Based on American Fuzzy Lop by Michal Zalewski
 ```
+
 ## Why I do this?
-There are a lot of command line arguments in the common binary, but common fuzzer only runs with one command line argument, so it cannot find some errors through the special command line.
-For instance, in CVE-2020-27843 I found, it have out of bound read with 8 argv and crafted input. Therefore, I made a fuzzer that can generate argv at runtime.
+During my research on SQ-Fuzz and Yuan-fuzz, I found that the existing multi-parameter fuzz testing has a serious time allocation problem. In most cases, the parameter mutation(arg_gen) can generate new edge coverage very efficiently in the early stage, but its decay speed is also very fast. After a period of execution, the performance of AFL's original mutation mechanism (havoc and splice) will surpass the parameter mutation. At the same time, in my understanding of AFL, the non-parametric file mutation is the key to finding deep problems in the program, and the usage of parameters is used as a guide. Based on this observation and idea, I tried to optimize the multi-parameter fuzz test by fine-tuning first, and finally tried to introduce the MAB (Multi-armed bandit) problem to allocate the mutation time more reasonably. Many papers also show that MAB is very suitable in the field of fuzz testing.
 
-## Technology
-Yuan-fuzz is a fuzzer implementing a technique to generate argv in addition fuzzing stage named arg_gen. It can help to fuzz binary target that has a lot of argv can use. 
-
-It also can use k-means clustering to the group in the seed pool to improve seed selection, just like the [k-means-AFL](https://github.com/zodf0055980/k-means-AFL) I made.
-
-![architecture](https://user-images.githubusercontent.com/25863161/119084812-0aabdb00-ba35-11eb-9480-684a6470f8a3.png)
+This fuzzer first fixes a serious memory leak problem in Yuan-fuzz. In the 47-hour experiment on objdump, it increased the edge coverage of 3.777% and more than doubled the number of executions. Based on the improved version and the above concepts, Wei-fuzz and Wei-fuzz(MAB) were implemented. In the 301-hour experiment on objdump, Wei-fuzz increased the edge coverage of 11.33% compared with Yuan-fuzz(fix)(Yuan-fuzz with memory leak fixed). Compared with Yuan-fuzz(fix), Wei-fuzz(MAB) increased the edge coverage of 18.64%. During the research period, 31 program errors were found, 23 of which have been fixed by the author, and 22 bugs were assigned CVE ids.
 
 
 ## TODO
-- Cannot use ` -i -` to resume fuzzer.
-- Cannot use without `-s xmlfile`, maybe you can try [k-means-AFL](https://github.com/zodf0055980/k-means-AFL) I made.
-- Allow use other format to write argv info file, likes json
-- Release English paper, I did in [traditional Chinese](https://etd.lib.nctu.edu.tw/cgi-bin/gs32/tugsweb.cgi?o=dnctucdr&s=id=%22GT070856162%22.&searchmode=basic) now.
-
-If you have any other questions, you are welcome to create issue and I will try my best to solve them.
+- Compare with other fuzzer scheduling methods like Ecofuzz.
+- Auto tunning the MAB coefficient(999/1000 now) 
 
 ## Usage
 Install [libxml2](http://xmlsoft.org/downloads.html) first.
@@ -32,22 +24,15 @@ Build it.
 ```
 $ make
 ```
-Use `-h` `--help` to know target program options, and use it to write XML file to help fuzzing.
-I give some [XML examples](https://github.com/zodf0055980/Yuan-fuzz/tree/main/xml) here, maybe could help to write XML file.
 
-We also implement our seed selection. You should open our seed selection server first if you want to use it.
-```
-$ python3 group_seed.py [port]
-```
+I update some [XML examples](https://github.com/13579and2468/Wei-fuzz/tree/main/xml) here.
 
-The command line usage of Yuan-fuzz is similar to AFL.
+Instrumentation method is the same as AFL.
+
+The command line usage of Wei-fuzz is similar to Yuan-fuzz and AFL, but can enable arg_gen_det with '-A' and MAB with '-a'.
+The defualt mode of Wei-fuzz uses 'quick and dirty' mode like AFL++. You can disable with '-D'.
 ```
-$ Yuan-fuzz -i [testcase_dir] -o [output_dir] -s [~/XML_PATH/parameters.xml] [-p [port]] -- [Target program]
-```
-I also implement two command that can help arg_gen stage.
-```
--w            - let file_path in front of argv
--r            - argv random initial
+$ Wei-fuzz -i [testcase_dir] -o [output_dir] -s [~/XML_PATH/parameters.xml] [-A] [-a] -- [Target program]
 ```
 
 ## Example
@@ -57,89 +42,65 @@ $ git clone git@github.com:libjpeg-turbo/libjpeg-turbo.git
 ```
 Build with instrumentation, you can use other compiler.
 ```
-$ export CC=~/Yuan-fuzz/afl-gcc                                       
-$ export CXX=~/Yuan-fuzz/afl-g++
-$ export AFL_USE_ASAN=1 ;
+$ export CC=~/Wei-fuzz/afl-gcc                                       
+$ export CXX=~/Wei-fuzz/afl-g++
 $ cd libjpeg-turbo
 $ mkdir build && cd build
 $ cmake -G"Unix Makefiles" ..
 $ make
 ```
+
 Run fuzzer
 ``` 
-$ python3 group_seed.py 8888
-# Another Terminal
-$ Yuan-fuzz -i ./testcases/images/jpeg -o fuzz_output -m none -s ./xml/libjpeg-turbo/djpeg/parameters.xml -p 8888 -- ~/TARGET_PATH/libjpeg-turbo/build/djpeg
-```
-If your xml file have a lot of argv, maybe you have to change some define value in parse.h.
-
-## parallel fuzzing
-Yuan-fuzz can parallel fuzz with other afl-base fuzzer, likely [AFLplusplus](https://github.com/AFLplusplus/AFLplusplus).
-However, Yuan-fuzz can only be used in -S mode. And please check argv information file is same with master run.
-
-for example:
-```
-# afl++
-$ ./afl-fuzz -i ./testcases/images/jpeg -o ~/jpeg-out -M master -m none -- ~/afl-target/libjpeg-turbo/build/djpeg -outfile /dev/null @@
-
-# Yuan-fuzz
-$ ./Yuan-fuzz -i ./testcases/images/jpeg -o ~/jpeg-out -S slave1 -m none -s ~/Yuan-fuzz/xml/libjpeg-turbo/djpeg/parameters.xml -- ~/afl-target/libjpeg-turbo/build/djpeg
+$ Wei-fuzz -i ./testcases/images/jpeg -o fuzz_output -m none -s ./xml/libjpeg-turbo/djpeg/parameters.xml -A -a -- ~/TARGET_PATH/libjpeg-turbo/build/djpeg
 ```
 
-
+If yout parameter list is too long, change the defined value of size in parse.h.
 
 ## Interpreting output
-It will have addition subdirectories created within the output directory and updated in real time.
+You can get the argv of seeds of queue and crashes in the queue_info directory.
 
 - queue_info/queue
 - queue_info/crashes
 - queue_info/hangs
 
-It save all seed running parameters and one-to-one correspondence with seed in queue, crashes, hangs subdirectories.
 ## Bug reported
-### libjpeg-turbo
-1. https://github.com/libjpeg-turbo/libjpeg-turbo/issues/441 (CVE-2020-35538)
+### nasm
+https://bugzilla.nasm.us/show_bug.cgi?id=3392820(CVE-2022-44368)
+https://bugzilla.nasm.us/show_bug.cgi?id=3392819 (CVE-2022-44369)
+https://bugzilla.nasm.us/show_bug.cgi?id=3392815 (CVE-2022-44370)
+https://bugzilla.nasm.us/show_bug.cgi?id=3392814 (CVE-2022-46456)
+https://bugzilla.nasm.us/show_bug.cgi?id=3392809 (CVE-2022-46457)
 ### binutils
-1. https://sourceware.org/bugzilla/show_bug.cgi?id=26774
-2. https://sourceware.org/bugzilla/show_bug.cgi?id=26805
-3. https://sourceware.org/bugzilla/show_bug.cgi?id=26809
-### openjpeg
-1. https://github.com/uclouvain/openjpeg/issues/1283 (CVE-2020-27814)
-2. https://github.com/uclouvain/openjpeg/issues/1284 (CVE-2020-27823)
-3. https://github.com/uclouvain/openjpeg/issues/1286 (CVE-2020-27824)
-4. https://github.com/uclouvain/openjpeg/issues/1293 (CVE-2020-27841)
-5. https://github.com/uclouvain/openjpeg/issues/1294 (CVE-2020-27842)
-6. https://github.com/uclouvain/openjpeg/issues/1297 (CVE-2020-27843)
-7. https://github.com/uclouvain/openjpeg/issues/1299 (CVE-2020-27844)
-8. https://github.com/uclouvain/openjpeg/issues/1302 (CVE-2020-27845)
-### jasper
-1. https://github.com/jasper-software/jasper/issues/252 (CVE-2020-27828)
-2. https://github.com/jasper-software/jasper/issues/263
-### libsndfile
-1. https://github.com/libsndfile/libsndfile/issues/675
-### libxls
-1. https://github.com/libxls/libxls/issues/90
-### aom
-1. https://bugs.chromium.org/p/aomedia/issues/detail?id=2905&q=&can=1 (CVE-2020-36130)
-2. https://bugs.chromium.org/p/aomedia/issues/detail?id=2911&q=&can=1 (CVE-2020-36131)
-3. https://bugs.chromium.org/p/aomedia/issues/detail?id=2912&q=&can=1 (CVE-2020-36129)
-4. https://bugs.chromium.org/p/aomedia/issues/detail?id=2913&q=&can=1 (CVE-2020-36133)
-5. https://bugs.chromium.org/p/aomedia/issues/detail?id=2914&q=&can=1 (CVE-2020-36134)
-6. https://bugs.chromium.org/p/aomedia/issues/detail?id=2910&q=&can=1 (CVE-2020-36135)
-### libredwg
-1. https://github.com/LibreDWG/libredwg/issues/320
-2. https://github.com/LibreDWG/libredwg/issues/323
-3. https://github.com/LibreDWG/libredwg/issues/324 (CVE-2021-28236)
-4. https://github.com/LibreDWG/libredwg/issues/321
-5. https://github.com/LibreDWG/libredwg/issues/325 (CVE-2021-28237) (non release code-path)
+https://sourceware.org/bugzilla/show_bug.cgi?id=29870 (CVE-2023-22603)
+https://sourceware.org/bugzilla/show_bug.cgi?id=29872 (CVE-2023-22604)
+https://sourceware.org/bugzilla/show_bug.cgi?id=29893 (CVE-2023-22605)
+https://sourceware.org/bugzilla/show_bug.cgi?id=29908 (CVE-2023-22606)
+https://sourceware.org/bugzilla/show_bug.cgi?id=29914 (CVE-2023-22607)
+https://sourceware.org/bugzilla/show_bug.cgi?id=29936 (CVE-2023-22608)
+https://sourceware.org/bugzilla/show_bug.cgi?id=29948 (CVE-2023-22609)
+https://sourceware.org/bugzilla/show_bug.cgi?id=29988 (CVE-2023-1579)
+https://sourceware.org/bugzilla/show_bug.cgi?id=30284
+https://sourceware.org/bugzilla/show_bug.cgi?id=30285 (CVE-2023-1972)
+### libtiff
+https://gitlab.com/libtiff/libtiff/-/issues/488 (CVE-2022-48281)
+https://gitlab.com/libtiff/libtiff/-/issues/520 (CVE-2023-25433)
+https://gitlab.com/libtiff/libtiff/-/issues/519 (CVE-2023-25434)
+https://gitlab.com/libtiff/libtiff/-/issues/518 (CVE-2023-25435)
+https://gitlab.com/libtiff/libtiff/-/issues/527 (CVE-2023-26965)
+https://gitlab.com/libtiff/libtiff/-/issues/530 (CVE-2023-26966)
+https://gitlab.com/libtiff/libtiff/-/issues/541
+https://gitlab.com/libtiff/libtiff/-/issues/549
+https://gitlab.com/libtiff/libtiff/-/issues/553
+https://gitlab.com/libtiff/libtiff/-/issues/554
+https://gitlab.com/libtiff/libtiff/-/issues/555
+https://gitlab.com/libtiff/libtiff/-/issues/556
+https://gitlab.com/libtiff/libtiff/-/issues/571
+### Aomedia
+https://bugs.chromium.org/p/aomedia/issues/detail?id=3424 (CVE-2023-31539)
+https://bugs.chromium.org/p/aomedia/issues/detail?id=3425 (CVE-2023-31540)
 ### libxml2
-1. https://gitlab.gnome.org/GNOME/libxml2/-/issues/231 (CVE-2021-3516)
-2. https://gitlab.gnome.org/GNOME/libxml2/-/issues/235 (CVE-2021-3517)
-3. https://gitlab.gnome.org/GNOME/libxml2/-/issues/237 (CVE-2021-3518)
----
-### libvips (not use fuzz)
-1. https://github.com/libvips/libvips/issues/1867
-2. https://github.com/libvips/libvips/issues/1868
+https://gitlab.gnome.org/GNOME/libxml2/-/issues/550
 
 ## Thanks
-Use [SQ-fuzz](https://github.com/fdgkhdkgh/SQ-Fuzz) to modify.
+Use [Yuan-fuzz](https://github.com/zodf0055980/Yuan-fuzz) to modify.
