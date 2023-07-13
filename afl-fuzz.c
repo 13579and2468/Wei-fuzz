@@ -153,7 +153,7 @@ EXP_ST u8 skip_deterministic = 1, /* Skip deterministic stages?       */
     do_splice = 1,            /* use for MAB                      */
     do_arg_gen = 1,           /* use for MAB                      */
     use_cg = 0,               /* -A for arg_gen_det               */
-    use_mab = 0;              /* use mab mode                     */
+    use_mab = 0;              /* -a to use mab mode                     */
 
 static s32 out_fd,       /* Persistent fd for out_file       */
     dev_urandom_fd = -1, /* Persistent fd for /dev/urandom   */
@@ -279,17 +279,17 @@ struct queue_entry
   u64 exec_us,  /* Execution time (us)              */
       handicap, /* Number of queue cycles behind    */
       depth,    /* Path depth                       */
-      total_havoc_exec_100us,
-      total_havoc_gen_path,
-      total_splice_exec_100us,
-      total_splice_gen_path,
-      total_arg_gen_exec_100us,
-      total_arg_gen_path,
-      expect_new_cov_arg_gen_time,
-      expect_new_cov_havoc_time,
-      expect_new_cov_splice_time,
-      expect_new_cov_time,
-      cannot_do_splice;
+      total_havoc_exec_100us,          /* Numerator of havoc arm per seed */
+      total_havoc_gen_path,            /* Denominator of havoc arm per seed */
+      total_splice_exec_100us,         /* Numerator of splice arm per seed */
+      total_splice_gen_path,           /* Denominator of havoc arm per seed */
+      total_arg_gen_exec_100us,        /* Numerator per arg_gen arm */
+      total_arg_gen_path,              /* Denominator per arg_gen arm */
+      expect_new_cov_arg_gen_time,     /* Expected value to find next new path of an arg_gen arm */
+      expect_new_cov_havoc_time,       /* Expected value to find next new path of a havoc arm */
+      expect_new_cov_splice_time,      /* Expected value to find next new path of a splice arm */ 
+      expect_new_cov_time,             /* Expected value to find next new path of a seed */
+      cannot_do_splice;                /* Prevent infinite loop to select a splice arm */
 
 
   u8 *trace_mini; /* Trace bytes, if kept             */
@@ -851,18 +851,19 @@ static void mark_as_redundant(struct queue_entry *q, u8 state)
   ck_free(fn);
 }
 
+/* The function to decay MAB arms*/
 static void mab_decay()
 {
   struct queue_entry* tmp_queue_cur = queue;
   while (tmp_queue_cur)
   {
-    if(tmp_queue_cur->total_havoc_gen_path > 1)
+    if(tmp_queue_cur->total_havoc_gen_path > 1)//prevent divide to zero
     {
       tmp_queue_cur->total_havoc_exec_100us = tmp_queue_cur->total_havoc_exec_100us * 999 / 1000;
       tmp_queue_cur->total_havoc_gen_path = tmp_queue_cur->total_havoc_gen_path * 999 / 1000; 
     }
 
-    if(tmp_queue_cur->total_splice_gen_path > 1)
+    if(tmp_queue_cur->total_splice_gen_path > 1)//prevent divide to zero
     {
       tmp_queue_cur->total_splice_exec_100us = tmp_queue_cur->total_splice_exec_100us * 999 / 1000;
       tmp_queue_cur->total_splice_gen_path = tmp_queue_cur->total_splice_gen_path * 999 / 1000;
@@ -870,8 +871,9 @@ static void mab_decay()
 
     if(!tmp_queue_cur->arg_gen_parent->decayed)
     {
+      // prevent decay arg_gen arm more than one time.
       tmp_queue_cur->arg_gen_parent->decayed = 1;
-      if(tmp_queue_cur->arg_gen_parent->total_arg_gen_path > 1)
+      if(tmp_queue_cur->arg_gen_parent->total_arg_gen_path > 1)//prevent divide to zero
       {
         tmp_queue_cur->arg_gen_parent->total_arg_gen_exec_100us = tmp_queue_cur->arg_gen_parent->total_arg_gen_exec_100us * 999 / 1000;
         tmp_queue_cur->arg_gen_parent->total_arg_gen_path = tmp_queue_cur->arg_gen_parent->total_arg_gen_path * 999 / 1000;
@@ -881,6 +883,7 @@ static void mab_decay()
     tmp_queue_cur = tmp_queue_cur->next;
   }
 
+  // recover arg_gen decayed flag
   tmp_queue_cur = queue;
   while (tmp_queue_cur)
   {
@@ -936,6 +939,7 @@ static void argv_add_to_queue(u8 *fname, u32 len, u8 passed_det, int argv_array[
 
   if(use_mab && queue_cur)
   {
+    //parent share MAB value with child. 
     q->total_havoc_exec_100us = (queue_cur->total_havoc_exec_100us + 1) / 2;
     q->total_havoc_gen_path = (queue_cur->total_havoc_gen_path + 1) / 2;
     q->total_splice_exec_100us = (queue_cur->total_splice_exec_100us + 1) / 2;
@@ -954,6 +958,7 @@ static void argv_add_to_queue(u8 *fname, u32 len, u8 passed_det, int argv_array[
     }
   }
 
+  // initail arm value of seed from parallel fuzzing.
   if(use_mab && strncmp(stage_name,"sync",4)==0)
   {
     q->total_havoc_exec_100us = MAB_ADD_CONST;
@@ -6923,6 +6928,7 @@ havoc_stage:
   if (stage_max < HAVOC_MIN)
     stage_max = HAVOC_MIN;
 
+  // the counter of failing to run splice.
   int cannot_splice_temp = 0;
   if(use_mab && !do_havoc && strcmp(stage_name,"havoc")==0)
   {
@@ -7354,12 +7360,16 @@ havoc_stage:
       if (queued_discovered != prev_queue_discover)
       {
         queue_cur->total_havoc_gen_path += MAB_ADD_CONST;
+
+        // add 1 to prevent divide to zero
         queue_cur->arg_gen_parent->total_arg_gen_exec_100us += 1;
         queue_cur->arg_gen_parent->total_arg_gen_path += 1;
         queue_cur->total_splice_exec_100us += 1;
         queue_cur->total_splice_gen_path += 1;
         queue_cur->total_havoc_gen_path += 1;
         queue_cur->total_havoc_exec_100us += 1;
+
+        //parent share MAB value with child.
         queue_cur->arg_gen_parent->total_arg_gen_exec_100us /= 2;
         queue_cur->arg_gen_parent->total_arg_gen_path /= 2;
         queue_cur->total_splice_exec_100us /= 2;
@@ -7374,12 +7384,16 @@ havoc_stage:
       if (queued_discovered != prev_queue_discover)
       {
         queue_cur->total_splice_gen_path += MAB_ADD_CONST;
+
+        // add 1 to prevent divide to zero
         queue_cur->arg_gen_parent->total_arg_gen_exec_100us += 1;
         queue_cur->arg_gen_parent->total_arg_gen_path += 1;
         queue_cur->total_splice_exec_100us += 1;
         queue_cur->total_splice_gen_path += 1;
         queue_cur->total_havoc_gen_path += 1;
         queue_cur->total_havoc_exec_100us += 1;
+
+        //parent share MAB value with child.
         queue_cur->arg_gen_parent->total_arg_gen_exec_100us /= 2;
         queue_cur->arg_gen_parent->total_arg_gen_path /= 2;
         queue_cur->total_splice_exec_100us /= 2;
@@ -7440,11 +7454,13 @@ havoc_stage:
 
 retry_splicing:
 
+  // If this seed always cannot run splice, add the exec count of a big value to prevent selecting this seed repeatedly.
   if(use_mab && cannot_splice_temp==SPLICE_CYCLES)
   {
     queue_cur->total_splice_exec_100us += SPLICE_CYCLES * stage_max * MAB_ADD_CONST * 20;
   }
 
+  // check if this seed cannot run splice stage
   if(use_mab && queue_cur->len<=1)
   {
     queue_cur->cannot_do_splice = 1;
@@ -7841,10 +7857,14 @@ static char **argv_fuzz_one(char **argv)
       if (queued_discovered != prev_queue_discover)
       {
         queue_cur->arg_gen_parent->total_arg_gen_path += MAB_ADD_CONST;
+
+        // add 1 to prevent divide to zero
         queue_cur->total_havoc_exec_100us += 1;
         queue_cur->total_havoc_gen_path += 1;
         queue_cur->total_splice_exec_100us += 1;
         queue_cur->total_splice_gen_path += 1;
+
+        //parent share MAB value with child.
         queue_cur->total_havoc_exec_100us /= 2;
         queue_cur->total_havoc_gen_path /= 2;
         queue_cur->total_splice_exec_100us /= 2;
@@ -7899,10 +7919,14 @@ static char **argv_fuzz_one(char **argv)
         if (queued_discovered != prev_queue_discover)
         {
           queue_cur->arg_gen_parent->total_arg_gen_path += MAB_ADD_CONST;
+
+          // add 1 to prevent divide to zero
           queue_cur->total_havoc_exec_100us += 1;
           queue_cur->total_havoc_gen_path += 1;
           queue_cur->total_splice_exec_100us += 1;
           queue_cur->total_splice_gen_path += 1;
+
+          //parent share MAB value with child.
           queue_cur->total_havoc_exec_100us /= 2;
           queue_cur->total_havoc_gen_path /= 2;
           queue_cur->total_splice_exec_100us /= 2;
@@ -8475,7 +8499,7 @@ static void usage(u8 *argv0)
        "  -D            - disable quick & dirty mode\n"
        "  -n            - fuzz without instrumentation (dumb mode)\n"
        "  -x dir        - optional fuzzer dictionary (see README)\n"
-       "  -a            - enable multi-arm-bandit seed&task schedling\n"
+       "  -a            - enable Multi-Armed-Bandit seed&task schedling\n"
        "  -A            - enable arg_gen_det stage\n\n"
 
        "Other stuff:\n\n"
@@ -9453,7 +9477,7 @@ int main(int argc, char **argv)
       break;
     }
 
-    case 'D': /* skip deterministic */
+    case 'D': /* use deterministic stage */
 
       if (skip_deterministic)
         FATAL("Multiple -D options not supported");
@@ -9517,13 +9541,13 @@ int main(int argc, char **argv)
 
       break;
 
-    case 'A': /* use argv det stage */
+    case 'A': /* use arg_gen_det stage */
 
       use_cg = 1;
 
       break;
 
-    case 'a': /* use multi-arm-bandit seed&task scheduling */
+    case 'a': /* use Multi-Armed-Bandit seed&task scheduling */
 
       use_mab = 1;
 
@@ -9884,6 +9908,8 @@ int main(int argc, char **argv)
 
       struct queue_entry* best_queue_cur = queue;
       number = 0;
+
+      // Get the queue_cur containing the best arm.
       while (queue_cur)
       {
         queue_cur->expect_new_cov_time = MIN(queue_cur->arg_gen_parent->expect_new_cov_arg_gen_time, queue_cur->expect_new_cov_havoc_time);
@@ -9898,10 +9924,12 @@ int main(int argc, char **argv)
         queue_cur = queue_cur->next;
       }
 
+      // Get the best arm of the seed containing the best arm.
       do_splice = (best_queue_cur->expect_new_cov_splice_time == best_queue_cur->expect_new_cov_time);
       do_havoc = (best_queue_cur->expect_new_cov_havoc_time == best_queue_cur->expect_new_cov_time);
       do_arg_gen = (best_queue_cur->arg_gen_parent->expect_new_cov_arg_gen_time == best_queue_cur->expect_new_cov_time);
       
+      // If the best arm is arg_gen choose the seed whose arg_gen not runned. 
       if(do_arg_gen)
       {
         queue_cur = queue;
@@ -9918,6 +9946,7 @@ int main(int argc, char **argv)
         }
       }
 
+      // select the best seed if not arg_gen used.
       if(!queue_cur)
       {
         queue_cur = best_queue_cur;
