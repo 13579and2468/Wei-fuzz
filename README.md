@@ -66,41 +66,41 @@ You can get the argv of seeds of queue and crashes in the queue_info directory.
 
 ## Bug reported
 ### nasm
-https://bugzilla.nasm.us/show_bug.cgi?id=3392820(CVE-2022-44368)
-https://bugzilla.nasm.us/show_bug.cgi?id=3392819 (CVE-2022-44369)
-https://bugzilla.nasm.us/show_bug.cgi?id=3392815 (CVE-2022-44370)
-https://bugzilla.nasm.us/show_bug.cgi?id=3392814 (CVE-2022-46456)
-https://bugzilla.nasm.us/show_bug.cgi?id=3392809 (CVE-2022-46457)
+https://bugzilla.nasm.us/show_bug.cgi?id=3392820 (CVE-2022-44368)\\
+https://bugzilla.nasm.us/show_bug.cgi?id=3392819 (CVE-2022-44369)\\
+https://bugzilla.nasm.us/show_bug.cgi?id=3392815 (CVE-2022-44370)\\
+https://bugzilla.nasm.us/show_bug.cgi?id=3392814 (CVE-2022-46456)\\
+https://bugzilla.nasm.us/show_bug.cgi?id=3392809 (CVE-2022-46457)\\
 ### binutils
-https://sourceware.org/bugzilla/show_bug.cgi?id=29870 (CVE-2023-22603)
-https://sourceware.org/bugzilla/show_bug.cgi?id=29872 (CVE-2023-22604)
-https://sourceware.org/bugzilla/show_bug.cgi?id=29893 (CVE-2023-22605)
-https://sourceware.org/bugzilla/show_bug.cgi?id=29908 (CVE-2023-22606)
-https://sourceware.org/bugzilla/show_bug.cgi?id=29914 (CVE-2023-22607)
-https://sourceware.org/bugzilla/show_bug.cgi?id=29936 (CVE-2023-22608)
-https://sourceware.org/bugzilla/show_bug.cgi?id=29948 (CVE-2023-22609)
-https://sourceware.org/bugzilla/show_bug.cgi?id=29988 (CVE-2023-1579)
-https://sourceware.org/bugzilla/show_bug.cgi?id=30284
-https://sourceware.org/bugzilla/show_bug.cgi?id=30285 (CVE-2023-1972)
+https://sourceware.org/bugzilla/show_bug.cgi?id=29870 (CVE-2023-22603)\\
+https://sourceware.org/bugzilla/show_bug.cgi?id=29872 (CVE-2023-22604)\\
+https://sourceware.org/bugzilla/show_bug.cgi?id=29893 (CVE-2023-22605)\\
+https://sourceware.org/bugzilla/show_bug.cgi?id=29908 (CVE-2023-22606)\\
+https://sourceware.org/bugzilla/show_bug.cgi?id=29914 (CVE-2023-22607)\\
+https://sourceware.org/bugzilla/show_bug.cgi?id=29936 (CVE-2023-22608)\\
+https://sourceware.org/bugzilla/show_bug.cgi?id=29948 (CVE-2023-22609)\\
+https://sourceware.org/bugzilla/show_bug.cgi?id=29988 (CVE-2023-1579)\\
+https://sourceware.org/bugzilla/show_bug.cgi?id=30284\\
+https://sourceware.org/bugzilla/show_bug.cgi?id=30285 (CVE-2023-1972)\\
 ### libtiff
-https://gitlab.com/libtiff/libtiff/-/issues/488 (CVE-2022-48281)
-https://gitlab.com/libtiff/libtiff/-/issues/520 (CVE-2023-25433)
-https://gitlab.com/libtiff/libtiff/-/issues/519 (CVE-2023-25434)
-https://gitlab.com/libtiff/libtiff/-/issues/518 (CVE-2023-25435)
-https://gitlab.com/libtiff/libtiff/-/issues/527 (CVE-2023-26965)
-https://gitlab.com/libtiff/libtiff/-/issues/530 (CVE-2023-26966)
-https://gitlab.com/libtiff/libtiff/-/issues/541
-https://gitlab.com/libtiff/libtiff/-/issues/549
-https://gitlab.com/libtiff/libtiff/-/issues/553
-https://gitlab.com/libtiff/libtiff/-/issues/554
-https://gitlab.com/libtiff/libtiff/-/issues/555
-https://gitlab.com/libtiff/libtiff/-/issues/556
-https://gitlab.com/libtiff/libtiff/-/issues/571
+https://gitlab.com/libtiff/libtiff/-/issues/488 (CVE-2022-48281)\\
+https://gitlab.com/libtiff/libtiff/-/issues/520 (CVE-2023-25433)\\
+https://gitlab.com/libtiff/libtiff/-/issues/519 (CVE-2023-25434)\\
+https://gitlab.com/libtiff/libtiff/-/issues/518 (CVE-2023-25435)\\
+https://gitlab.com/libtiff/libtiff/-/issues/527 (CVE-2023-26965)\\
+https://gitlab.com/libtiff/libtiff/-/issues/530 (CVE-2023-26966)\\
+https://gitlab.com/libtiff/libtiff/-/issues/541\\
+https://gitlab.com/libtiff/libtiff/-/issues/549\\
+https://gitlab.com/libtiff/libtiff/-/issues/553\\
+https://gitlab.com/libtiff/libtiff/-/issues/554\\
+https://gitlab.com/libtiff/libtiff/-/issues/555\\
+https://gitlab.com/libtiff/libtiff/-/issues/556\\
+https://gitlab.com/libtiff/libtiff/-/issues/571\\
 ### Aomedia
-https://bugs.chromium.org/p/aomedia/issues/detail?id=3424 (CVE-2023-31539)
-https://bugs.chromium.org/p/aomedia/issues/detail?id=3425 (CVE-2023-31540)
+https://bugs.chromium.org/p/aomedia/issues/detail?id=3424 (CVE-2023-31539)\\
+https://bugs.chromium.org/p/aomedia/issues/detail?id=3425 (CVE-2023-31540)\\
 ### libxml2
-https://gitlab.gnome.org/GNOME/libxml2/-/issues/550
+https://gitlab.gnome.org/GNOME/libxml2/-/issues/550\\
 
 ## Thanks
 Use [Yuan-fuzz](https://github.com/zodf0055980/Yuan-fuzz) to modify.
