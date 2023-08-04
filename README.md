@@ -40,6 +40,8 @@ The defualt mode of Wei-fuzz uses 'quick and dirty' mode like AFL++. You can dis
 $ Wei-fuzz -i [testcase_dir] -o [output_dir] -s [~/XML_PATH/parameters.xml] [-A] [-a] -- [Target program]
 ```
 
+If you want to compare MAB with other non-multi-parameter fuzzer, just push argument only in \<ELEMENT\>. 
+
 ## Example
 Use [libjpeg-turbo](https://github.com/libjpeg-turbo/libjpeg-turbo) to be example.
 ```
