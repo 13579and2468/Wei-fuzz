@@ -17,6 +17,11 @@ This fuzzer first fixes a serious memory leak problem in Yuan-fuzz. In the 47-ho
 - Compare with other fuzzer scheduling methods like Ecofuzz.
 - Auto tunning the MAB coefficient(999/1000 now) 
 
+## Environment 
+
+OS : Ubuntu 20.04  
+kernel : 5.4.0-149-generic  
+
 ## Usage
 Install [libxml2](http://xmlsoft.org/downloads.html) first.
 
@@ -34,6 +39,8 @@ The defualt mode of Wei-fuzz uses 'quick and dirty' mode like AFL++. You can dis
 ```
 $ Wei-fuzz -i [testcase_dir] -o [output_dir] -s [~/XML_PATH/parameters.xml] [-A] [-a] -- [Target program]
 ```
+
+If you want to compare MAB with other non-multi-parameter fuzzer, just push argument only in \<ELEMENT\> like [example](https://github.com/13579and2468/Wei-fuzz/tree/main/xml/non_multi_argument_fuzzing_example.xml). 
 
 ## Example
 Use [libjpeg-turbo](https://github.com/libjpeg-turbo/libjpeg-turbo) to be example.

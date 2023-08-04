@@ -9479,7 +9479,7 @@ int main(int argc, char **argv)
 
     case 'D': /* use deterministic stage */
 
-      if (skip_deterministic)
+      if (!skip_deterministic)
         FATAL("Multiple -D options not supported");
       skip_deterministic = 0;
       use_splicing = 0;
@@ -9549,6 +9549,8 @@ int main(int argc, char **argv)
 
     case 'a': /* use Multi-Armed-Bandit seed&task scheduling */
 
+      if (!skip_deterministic)
+        FATAL("-D cannot use with -a");
       use_mab = 1;
 
       break;
@@ -9794,7 +9796,7 @@ int main(int argc, char **argv)
       sync_fuzzers(init_argv);
 
     // argv-fuzz
-    if (argv_fuzz_flag)
+    if (argv_fuzz_flag && parameter_count != 0)
     {
       argv_no_forkserver = 1;
       use_argv = argv_fuzz_one(use_argv);
@@ -9870,7 +9872,7 @@ int main(int argc, char **argv)
     }
 
     // argv-fuzz
-    if (argv_fuzz_flag)
+    if (argv_fuzz_flag && parameter_count != 0)
     {
       argv_no_forkserver = 1;
       use_argv = argv_fuzz_one(use_argv);
@@ -9911,8 +9913,17 @@ int main(int argc, char **argv)
 
       // Get the queue_cur containing the best arm.
       while (queue_cur)
-      {
-        queue_cur->expect_new_cov_time = MIN(queue_cur->arg_gen_parent->expect_new_cov_arg_gen_time, queue_cur->expect_new_cov_havoc_time);
+      {        
+  
+        if(parameter_count != 0)
+        {
+          queue_cur->expect_new_cov_time = MIN(queue_cur->arg_gen_parent->expect_new_cov_arg_gen_time, queue_cur->expect_new_cov_havoc_time);
+        }
+        else //If only one parameter (for non-multi-argumnet fuzzing)
+        {
+          queue_cur->expect_new_cov_time = queue_cur->expect_new_cov_havoc_time;
+        }
+
         if(!queue_cur->cannot_do_splice)queue_cur->expect_new_cov_time = MIN(queue_cur->expect_new_cov_time, queue_cur->expect_new_cov_splice_time);
 
         if (queue_cur->expect_new_cov_time < best_queue_cur->expect_new_cov_time)
