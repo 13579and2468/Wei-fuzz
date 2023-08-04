@@ -18,7 +18,7 @@ This fuzzer first fixes a serious memory leak problem in Yuan-fuzz. In the 47-ho
 - Auto tunning the MAB coefficient(999/1000 now) 
 
 ## Environment 
-OS : Ubuntu 20.04
+OS : Ubuntu 20.04 \ 
 kernel : 5.4.0-149-generic
 
 ## Usage
