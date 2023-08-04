@@ -17,6 +17,10 @@ This fuzzer first fixes a serious memory leak problem in Yuan-fuzz. In the 47-ho
 - Compare with other fuzzer scheduling methods like Ecofuzz.
 - Auto tunning the MAB coefficient(999/1000 now) 
 
+## Environment 
+OS : Ubuntu 20.04
+kernel : 5.4.0-149-generic
+
 ## Usage
 Install [libxml2](http://xmlsoft.org/downloads.html) first.
 
