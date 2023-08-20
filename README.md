@@ -10,7 +10,7 @@ Either Wei-fuzz or Wei-fuzz with MAB improve the time allocation of Yuan-fuzz.
 ## Why I do this?
 During my research on SQ-Fuzz and Yuan-fuzz, I found that the existing multi-parameter fuzz testing has a serious time allocation problem. In most cases, the parameter mutation(arg_gen) can generate new edge coverage very efficiently in the early stage, but its decay speed is also very fast. After a period of execution, the performance of AFL's original mutation mechanism (havoc and splice) will surpass the parameter mutation. At the same time, in my understanding of AFL, the non-parametric file mutation is the key to finding deep problems in the program, and the usage of parameters is used as a guide. Based on this observation and idea, I tried to optimize the multi-parameter fuzz test by fine-tuning first, and finally tried to introduce the MAB (Multi-armed bandit) problem to allocate the mutation time more reasonably. Many papers also show that MAB is very suitable in the field of fuzz testing.
 
-This fuzzer first fixes a serious memory leak problem in Yuan-fuzz. In the 47-hour experiment on objdump, it increased the edge coverage of 3.777% and more than doubled the number of executions. Based on the improved version and the above concepts, Wei-fuzz and Wei-fuzz(MAB) were implemented. In the 301-hour experiment on objdump, Wei-fuzz increased the edge coverage of 11.33% compared with Yuan-fuzz(fix)(Yuan-fuzz with memory leak fixed). Compared with Yuan-fuzz(fix), Wei-fuzz(MAB) increased the edge coverage of 18.64%. During the research period, 31 program errors were found, 23 of which have been fixed by the author, and 22 bugs were assigned CVE ids.
+This fuzzer first fixes a serious memory leak problem in Yuan-fuzz. In the 47-hour experiment on objdump, it increased the edge coverage of 3.777% and more than doubled the number of executions. Based on the improved version and the above concepts, Wei-fuzz and Wei-fuzz(MAB) were implemented. In the 301-hour experiment on objdump, Wei-fuzz increased the edge coverage of 11.33% compared with Yuan-fuzz(fix)(Yuan-fuzz with memory leak fixed). Compared with Yuan-fuzz(fix), Wei-fuzz(MAB) increased the edge coverage of 18.64%. During the research period, 31 program errors were found, 23 of which have been fixed by the author, and 16 bugs were assigned CVE ids.
 
 
 ## TODO
@@ -79,13 +79,13 @@ https://bugzilla.nasm.us/show_bug.cgi?id=3392815 (CVE-2022-44370) (fixed by auth
 https://bugzilla.nasm.us/show_bug.cgi?id=3392814 (CVE-2022-46456) \
 https://bugzilla.nasm.us/show_bug.cgi?id=3392809 (CVE-2022-46457) (fixed by author)
 ### binutils
-https://sourceware.org/bugzilla/show_bug.cgi?id=29870 (CVE-2023-22603) (fixed by author) \
-https://sourceware.org/bugzilla/show_bug.cgi?id=29872 (CVE-2023-22604) (fixed by author) \
-https://sourceware.org/bugzilla/show_bug.cgi?id=29893 (CVE-2023-22605) (fixed by author) \
-https://sourceware.org/bugzilla/show_bug.cgi?id=29908 (CVE-2023-22606) (fixed by author) \
-https://sourceware.org/bugzilla/show_bug.cgi?id=29914 (CVE-2023-22607) (fixed by author) \
-https://sourceware.org/bugzilla/show_bug.cgi?id=29936 (CVE-2023-22608) (fixed by author) \
-https://sourceware.org/bugzilla/show_bug.cgi?id=29948 (CVE-2023-22609) (fixed by author) \
+https://sourceware.org/bugzilla/show_bug.cgi?id=29870 (CVE-2023-22603) (fixed by author) (withdrawn by RedHat)\
+https://sourceware.org/bugzilla/show_bug.cgi?id=29872 (CVE-2023-22604) (fixed by author) (withdrawn by RedHat)\
+https://sourceware.org/bugzilla/show_bug.cgi?id=29893 (CVE-2023-22605) (fixed by author) (withdrawn by RedHat)\
+https://sourceware.org/bugzilla/show_bug.cgi?id=29908 (CVE-2023-22606) (fixed by author) (withdrawn by RedHat)\
+https://sourceware.org/bugzilla/show_bug.cgi?id=29914 (CVE-2023-22607) (fixed by author) (withdrawn by RedHat)\
+https://sourceware.org/bugzilla/show_bug.cgi?id=29936 (CVE-2023-22608) (fixed by author) (withdrawn by RedHat)\
+https://sourceware.org/bugzilla/show_bug.cgi?id=29948 (CVE-2023-22609) (fixed by author) (move to CVE-2023-2222 by RedHat)\
 https://sourceware.org/bugzilla/show_bug.cgi?id=29988 (CVE-2023-1579) (fixed by author) \
 https://sourceware.org/bugzilla/show_bug.cgi?id=30284 (fixed by author) \
 https://sourceware.org/bugzilla/show_bug.cgi?id=30285 (CVE-2023-1972) (fixed by author) 
