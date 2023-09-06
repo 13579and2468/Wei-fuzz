@@ -1,0 +1,141 @@
+<root>
+  <FILE>
+    <ELEMENT>-r @@</ELEMENT>
+ </FILE>
+ <PARAMETER>
+    <MUST>false</MUST>
+    <ELEMENT>-A</ELEMENT>
+  </PARAMETER>
+  <PARAMETER>
+    <MUST>false</MUST>
+    <ELEMENT>-b</ELEMENT>
+  </PARAMETER>
+  <PARAMETER>
+    <MUST>false</MUST>
+    <ELEMENT>-B 50</ELEMENT>
+  </PARAMETER>
+  <PARAMETER>
+    <MUST>false</MUST>
+    <ELEMENT>-c 20</ELEMENT>
+  </PARAMETER>
+  <PARAMETER>
+    <MUST>false</MUST>
+    <ELEMENT>-d</ELEMENT>
+  </PARAMETER>
+  <PARAMETER>
+    <MUST>false</MUST>
+    <ELEMENT>-dd</ELEMENT>
+  </PARAMETER>
+  <PARAMETER>
+    <MUST>false</MUST>
+    <ELEMENT>-ddd</ELEMENT>
+  </PARAMETER>
+  <PARAMETER>
+    <MUST>false</MUST>
+    <ELEMENT>-e</ELEMENT>
+  </PARAMETER>
+  <PARAMETER>
+    <MUST>false</MUST>
+    <ELEMENT>-H</ELEMENT>
+  </PARAMETER>
+  <PARAMETER>
+    <MUST>false</MUST>
+    <ELEMENT>-K</ELEMENT>
+  </PARAMETER>
+  <PARAMETER>
+    <MUST>false</MUST>
+    <ELEMENT>-M secret</ELEMENT>
+  </PARAMETER>
+  <PARAMETER>
+    <MUST>false</MUST>
+    <ELEMENT>-n</ELEMENT>
+  </PARAMETER>
+  <PARAMETER>
+    <MUST>false</MUST>
+    <ELEMENT>-#</ELEMENT>
+  </PARAMETER>
+  <PARAMETER>
+    <MUST>false</MUST>
+    <ELEMENT>-O</ELEMENT>
+  </PARAMETER>
+  <PARAMETER>
+    <MUST>false</MUST>
+    <ELEMENT>-#</ELEMENT>
+  </PARAMETER>
+  <PARAMETER>
+    <MUST>false</MUST>
+    <ELEMENT>-Q in</ELEMENT>
+    <ELEMENT>-Q out</ELEMENT>
+    <ELEMENT>-Q inout</ELEMENT>
+  </PARAMETER>
+  <PARAMETER>
+    <MUST>false</MUST>
+    <ELEMENT>-q</ELEMENT>
+  </PARAMETER>
+  <PARAMETER>
+    <MUST>false</MUST>
+    <ELEMENT>-S</ELEMENT>
+  </PARAMETER>
+  <PARAMETER>
+    <MUST>false</MUST>
+    <ELEMENT>-s 10</ELEMENT>
+  </PARAMETER>
+  <PARAMETER>
+    <MUST>false</MUST>
+    <ELEMENT>-T aodv</ELEMENT>
+    <ELEMENT>-T carp</ELEMENT>
+    <ELEMENT>-T cnfp</ELEMENT>
+    <ELEMENT>-T domain</ELEMENT>
+    <ELEMENT>-T lmp</ELEMENT>
+    <ELEMENT>-T pgm</ELEMENT>
+    <ELEMENT>-T pgm_zmtp1</ELEMENT>
+    <ELEMENT>-T ptp</ELEMENT>
+    <ELEMENT>-T quic</ELEMENT>
+    <ELEMENT>-T radius</ELEMENT>
+    <ELEMENT>-T resp</ELEMENT>
+    <ELEMENT>-T rpc</ELEMENT>
+    <ELEMENT>-T rtcp</ELEMENT>
+    <ELEMENT>-T rtp</ELEMENT>
+    <ELEMENT>-T snmp</ELEMENT>
+    <ELEMENT>-T someip</ELEMENT>
+    <ELEMENT>-T tftp</ELEMENT>
+    <ELEMENT>-T vat</ELEMENT>
+    <ELEMENT>-T vxlan</ELEMENT>
+    <ELEMENT>-T wb</ELEMENT>
+    <ELEMENT>-T zmtp1</ELEMENT>
+  </PARAMETER>
+  <PARAMETER>
+    <MUST>false</MUST>
+    <ELEMENT>-t</ELEMENT>
+    <ELEMENT>-tt</ELEMENT>
+    <ELEMENT>-ttt</ELEMENT>
+    <ELEMENT>-tttt</ELEMENT>
+    <ELEMENT>-ttttt</ELEMENT>
+  </PARAMETER>
+  <PARAMETER>
+    <MUST>false</MUST>
+    <ELEMENT>-u</ELEMENT>
+  </PARAMETER>
+  <PARAMETER>
+    <MUST>false</MUST>
+    <ELEMENT>-v</ELEMENT>
+    <ELEMENT>-vv</ELEMENT>
+    <ELEMENT>-vvv</ELEMENT>
+  </PARAMETER>
+  <PARAMETER>
+    <MUST>false</MUST>
+    <ELEMENT>-x</ELEMENT>
+    <ELEMENT>-xx</ELEMENT>
+  </PARAMETER>
+  <PARAMETER>
+    <MUST>false</MUST>
+    <ELEMENT>-X</ELEMENT>
+    <ELEMENT>-XX</ELEMENT>
+  </PARAMETER>
+  <PARAMETER>
+    <MUST>false</MUST>
+    <ELEMENT>-y EN10MB</ELEMENT>
+    <ELEMENT>-y DOCSIS</ELEMENT>
+  </PARAMETER>
+
+</root>
