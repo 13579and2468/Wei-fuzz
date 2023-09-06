@@ -185,7 +185,7 @@
     <ELEMENT>-v</ELEMENT>
   </PARAMETER>
   <PARAMETER>
-    <MUST>false</MUST>
+    <MUST>true</MUST>
     <ELEMENT>-o /dev/null</ELEMENT>
   </PARAMETER>
 </root>
