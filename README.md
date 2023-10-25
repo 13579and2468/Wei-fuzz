@@ -15,7 +15,8 @@ This fuzzer first fixes a serious memory leak problem in Yuan-fuzz. In the 47-ho
 
 ## TODO
 - Compare with other fuzzer scheduling methods like Ecofuzz.
-- Auto tunning the MAB coefficient(999/1000 now) 
+- Auto tunning the MAB coefficient(999/1000 now)
+- Merge AFL seed selection(exploration) with MAB(exploitation) selection
 
 ## Environment 
 
